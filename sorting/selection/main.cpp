@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     for(std::size_t i = 0; i<size.getValue(); i++)
         buffer[i] = random_number.getNumber();
 
-    SORTER sorter;
+    SELECTION sorter;
     sorter.sort(buffer);
 
     std::string result = (sorter.checkSorted(buffer))?"PASS":"FAIL";

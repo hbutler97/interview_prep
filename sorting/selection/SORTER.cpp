@@ -4,11 +4,11 @@
 
 #include "SORTER.h"
 #include "MEASUREMENT.h"
-SORTER::SORTER() {
 
+SELECTION::SELECTION() {
 }
 
-bool SORTER::sort(std::vector<uint32_t> &array) {
+void SELECTION::sort(std::vector<uint32_t> &array) {
     /*
      * Algorithm
      * 1. index through the input buffer starting with the first element
@@ -27,9 +27,9 @@ bool SORTER::sort(std::vector<uint32_t> &array) {
     }
     measure.stop();
     measure.report();
-    return true;
+    return;
 }
-
+//SORTER
 void SORTER::swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b) {
     //add error checking on bounds
     uint32_t temp = buffer[a];

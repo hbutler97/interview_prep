@@ -19,6 +19,6 @@ void MEASUREMENT::stop() {
 }
 
 void MEASUREMENT::report() {
-    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(m_t2 - m_t1);
-    std::cout << "Time: " << time_span.count() << " seconds" << std::endl;
+    std::chrono::duration<double> timeSpan = std::chrono::duration_cast<std::chrono::duration<double>>(m_t2 - m_t1);
+    std::cout << "Time: " << timeSpan.count() << " seconds" << std::endl;
 }
