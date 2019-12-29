@@ -9,7 +9,7 @@ SELECTION::SELECTION() {
 }
 
 void SELECTION::sort(std::vector<uint32_t> &array) {
-    /*
+    /*  
      * Algorithm
      * 1. index through the input buffer starting with the first element
      * 2. for every iteration, find the smallest value in the buffer
