@@ -1,7 +1,7 @@
 //
 // Created by hbutl on 12/27/2019.
 //
-#include <assert.h>
+#include <cassert>
 #include "RANDOM_GENERATOR.h"
 
 RANDOM_GENERATOR::RANDOM_GENERATOR(uint32_t low, uint32_t high) {

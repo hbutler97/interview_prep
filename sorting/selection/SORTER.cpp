@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <cassert>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
@@ -33,7 +34,8 @@ void SELECTION::sort(std::vector<uint32_t> &array) {
 }
 //SORTER
 void SORTER::swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b) {
-    //add error checking on bounds
+    assert(a < buffer.size());
+    assert(b < buffer.size());
     uint32_t temp = buffer[a];
     buffer[a] = buffer[b];
     buffer[b] = temp;
@@ -55,6 +57,8 @@ SORTER_SELECTOR::SORTER_SELECTOR() {
 }
 
 void SORTER_SELECTOR::sort(std::string &sort_algorithm, std::vector<uint32_t> &array) {
+    if(array.empty())
+        throw SORT_EXCEPT("Input vector is empty.  Nothing to sort");
     if(m_map.find(sort_algorithm) == m_map.end()) {
         std::cout << sort_algorithm << " Algorithm is not an option" << std::endl;
         std::cout << "Please enter one of the following algorithms:" << std::endl;
