@@ -2,13 +2,13 @@
 // Created by hbutl on 12/28/2019.
 //
 
+#include <iostream>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
 
 
-SELECTION::SELECTION() {
-}
+SELECTION::SELECTION() = default;
 
 void SELECTION::sort(std::vector<uint32_t> &array) {
     /*
@@ -29,7 +29,6 @@ void SELECTION::sort(std::vector<uint32_t> &array) {
     }
     measure.stop();
     measure.report();
-    return;
 }
 //SORTER
 void SORTER::swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b) {
@@ -37,12 +36,27 @@ void SORTER::swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b) {
     uint32_t temp = buffer[a];
     buffer[a] = buffer[b];
     buffer[b] = temp;
-    return;
 }
 
-bool SORTER::checkSorted(std::vector<uint32_t> &array) {
+bool SORTER_SELECTOR::checkSorted(std::vector<uint32_t> &array) {
     bool pass = true;
-    for(size_t i = 0; i < array.size() - 1 ; i++)
-        pass = (array[i] <= array[i+1])?true:false;
+    for(size_t i = 0; i < array.size() - 1 && pass ; i++)
+        pass = array[i] <= array[i + 1];
     return pass;
+}
+
+SORTER_SELECTOR::SORTER_SELECTOR() {
+    m_map["selection"] = std::make_unique<SELECTION>();
+}
+
+void SORTER_SELECTOR::sort(std::string &sort_algorithm, std::vector<uint32_t> &array) {
+    //add exception
+    if(m_map.find(sort_algorithm) == m_map.end()) {
+        std::cout << sort_algorithm << " Algorithm is not an option" << std::endl;
+        std::cout << "Please enter one of the following algorithms:" << std::endl;
+        for(const auto &algorithm :m_map)
+            std::cout << algorithm.first << std::endl;
+    }
+    else
+       m_map[sort_algorithm]->sort(array);
 }

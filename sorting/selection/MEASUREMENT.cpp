@@ -5,10 +5,7 @@
 #include <ratio>
 #include "MEASUREMENT.h"
 
-MEASUREMENT::MEASUREMENT()
-{
-
-}
+MEASUREMENT::MEASUREMENT() = default;
 
 void MEASUREMENT::start() {
     m_t1 = std::chrono::high_resolution_clock::now();

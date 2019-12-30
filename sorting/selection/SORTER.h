@@ -5,22 +5,31 @@
 #ifndef SORTER_H
 #define SORTER_H
 #include <vector>
+#include <string>
 #include <cstdint>
-
+#include <unordered_map>
+#include <memory>
 class SORTER {
 public:
     virtual void sort(std::vector<uint32_t> &array) = 0;
-    bool checkSorted(std::vector<uint32_t> &array);
-protected:
-    void swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b);
-};
 
+protected:
+    static void swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b);
+};
+class SORTER_SELECTOR {
+public:
+    SORTER_SELECTOR();
+    void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
+    static bool checkSorted(std::vector<uint32_t> &array);
+private:
+    std::unordered_map<std::string, std::unique_ptr<SORTER>> m_map;
+};
 class SELECTION : public SORTER {
 public:
     SELECTION();
     SELECTION(const SELECTION&) = delete;
     SELECTION& operator =(const SELECTION&) = delete;
-    void sort(std::vector<uint32_t> &array);
+    void sort(std::vector<uint32_t> &array) override;
 private:
 };
 #endif //SORTER_H
