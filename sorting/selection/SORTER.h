@@ -7,8 +7,18 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <stdexcept>
 #include <unordered_map>
 #include <memory>
+
+class SORT_EXCEPT : std::runtime_error {
+public:
+    explicit SORT_EXCEPT(const char *msg) : runtime_error(msg) {m_message = this->what();};
+    std::string getMessage(){return m_message;};
+private:
+    std::string m_message;
+};
+
 class SORTER {
 public:
     virtual void sort(std::vector<uint32_t> &array) = 0;

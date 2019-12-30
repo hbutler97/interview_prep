@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <stdexcept>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
@@ -40,6 +41,10 @@ void SORTER::swap(std::vector<uint32_t> &buffer, std::size_t a, std::size_t b) {
 
 bool SORTER_SELECTOR::checkSorted(std::vector<uint32_t> &array) {
     bool pass = true;
+    if(array.empty()){
+        std::cout << "Input vector is empty.  Can't check if it is sorted" << std::endl;
+        pass = false;
+    }
     for(size_t i = 0; i < array.size() - 1 && pass ; i++)
         pass = array[i] <= array[i + 1];
     return pass;
@@ -50,12 +55,12 @@ SORTER_SELECTOR::SORTER_SELECTOR() {
 }
 
 void SORTER_SELECTOR::sort(std::string &sort_algorithm, std::vector<uint32_t> &array) {
-    //add exception
     if(m_map.find(sort_algorithm) == m_map.end()) {
         std::cout << sort_algorithm << " Algorithm is not an option" << std::endl;
         std::cout << "Please enter one of the following algorithms:" << std::endl;
         for(const auto &algorithm :m_map)
             std::cout << algorithm.first << std::endl;
+        throw SORT_EXCEPT("Invalid sorting algorithm specified");
     }
     else
        m_map[sort_algorithm]->sort(array);
