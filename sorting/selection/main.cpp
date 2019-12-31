@@ -7,6 +7,7 @@
 #include "RANDOM_GENERATOR.h"
 #include "SORTER.h"
 
+
 int main(int argc, char* argv[]) {
     try {
         std::unique_ptr<TCLAP::CmdLine> cmd = std::make_unique<TCLAP::CmdLine>("Usage", ' ', "1.0");

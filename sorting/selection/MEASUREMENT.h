@@ -16,6 +16,7 @@ public:
     void report();
     MEASUREMENT(const MEASUREMENT&) = delete;
     MEASUREMENT& operator =(const MEASUREMENT&) = delete;
+    ~MEASUREMENT() = default;
 private:
     std::chrono::high_resolution_clock::time_point m_t1;
     std::chrono::high_resolution_clock::time_point m_t2;
