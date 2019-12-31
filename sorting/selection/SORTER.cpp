@@ -123,6 +123,47 @@ void INSERTION_ITER::sort(std::vector<uint32_t> &array) {
             else
                 found_slot = true;
         }
-
     }
+}
+
+void MERGE::sort(std::vector<uint32_t> &array) {
+    //Need to check input
+    //what about odd case for array size
+    merge_sort(array, 0, array.size() -1);
+}
+
+void MERGE::merge_sort(std::vector<uint32_t> &array, size_t begin, size_t end) {
+    if(end <= begin)
+        return;
+    size_t l_begin = begin;
+    size_t l_end = (begin + end)/2;
+    size_t r_begin = l_end + 1;
+    size_t r_end = end;
+    merge_sort(array, l_begin, l_end);
+    merge_sort(array, r_begin , r_end);
+    merge(array,l_begin,l_end,r_begin,r_end);
+}
+
+void MERGE::merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end, size_t r_begin, size_t r_end) {
+
+    std::vector<uint32_t> temp_buffer((l_end - l_begin + 1) + (r_end - r_begin + 1));
+    size_t left = l_begin;
+    size_t right = r_begin;
+    size_t index = 0;
+    while(left <= l_end && right <= r_end) {
+        if(array[left] <= array[right])
+            temp_buffer[index++] = array[left++];
+        else
+            temp_buffer[index++] = array[right++];
+    }
+    while(left <= l_end)
+        temp_buffer[index++] = array[left++];
+
+    while(right <= r_end)
+        temp_buffer[index++] = array[right++];
+
+    left = l_begin;
+    index = 0;
+    while(left <= r_end)
+        array[left++] = temp_buffer[index++];
 }

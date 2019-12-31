@@ -60,6 +60,17 @@ public:
     INSERTION_ITER& operator =(const INSERTION_ITER&) = delete;
     void sort(std::vector<uint32_t> &array) override;
 };
+class MERGE : public SORTER {
+public:
+    MERGE() = default;
+    MERGE(const MERGE&) = delete;
+    MERGE& operator =(const MERGE&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+private:
+    static void merge_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
+    static void merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end,
+                     size_t r_begin, size_t r_end);
+};
 class SORTER_SELECTOR {
 public:
     SORTER_SELECTOR(){
@@ -67,6 +78,7 @@ public:
         m_map["bubble"] = std::make_unique<BUBBLE>();
         m_map["insertion"] = std::make_unique<INSERTION>();
         m_map["insertion_iter"] = std::make_unique<INSERTION_ITER>();
+        m_map["merge"] = std::make_unique<MERGE>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);
