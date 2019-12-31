@@ -53,12 +53,20 @@ public:
 private:
     static void sortHelper(std::vector<uint32_t> &array, size_t numb_elements);
 };
+class INSERTION_ITER : public SORTER {
+public:
+    INSERTION_ITER() = default;
+    INSERTION_ITER(const INSERTION_ITER&) = delete;
+    INSERTION_ITER& operator =(const INSERTION_ITER&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+};
 class SORTER_SELECTOR {
 public:
     SORTER_SELECTOR(){
         m_map["selection"] = std::make_unique<SELECTION>();
         m_map["bubble"] = std::make_unique<BUBBLE>();
         m_map["insertion"] = std::make_unique<INSERTION>();
+        m_map["insertion_iter"] = std::make_unique<INSERTION_ITER>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);

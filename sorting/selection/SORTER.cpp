@@ -109,3 +109,20 @@ void INSERTION::sortHelper(std::vector<uint32_t> &array, size_t numb_elements) {
             found_slot = true;
     }
 }
+
+void INSERTION_ITER::sort(std::vector<uint32_t> &array) {
+    for(size_t j = 1; j < array.size(); j++){
+        size_t index = j;
+        uint32_t value = array[index];
+        bool found_slot = false;
+        for(size_t i = index; (i > 0) & (!found_slot); --i) {
+            if(array[i-1] > value) {
+                array[i] = array[i - 1];
+                array[i-1] = value;
+            }
+            else
+                found_slot = true;
+        }
+
+    }
+}
