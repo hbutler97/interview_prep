@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
         for(std::size_t i = 0; i<size.getValue(); i++)
             buffer[i] = random_number.getNumber();
-        
+
         SORTER_SELECTOR sorter;
         sorter.sort(algorithm.getValue(),buffer);
         std::string result = (sorter.checkSorted(buffer))?"PASS":"FAIL";

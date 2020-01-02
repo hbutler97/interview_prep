@@ -191,18 +191,15 @@ void QUICK::quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end) {
     if(end <= begin)
         return;
     RANDOM_GENERATOR rand_number(begin, end);
-    size_t pivot_index = rand_number.getNumber();
-    swap(array,pivot_index, begin);
+    swap(array,rand_number.getNumber(), begin);
+
     size_t low(begin + 1);
-    size_t high = low;
-    for(high = low; high <= end; high++){
-        if(array[high] < array[begin]){
-            swap(array,low, high);
-            low++;
-        }
+
+    for(size_t high = low; high <= end; high++){
+        if(array[high] < array[begin])
+            swap(array,low++, high);
     }
     swap(array,begin,low-1);
-
     quick_sort(array,begin,low-1);
     quick_sort(array,low, end);
 }
