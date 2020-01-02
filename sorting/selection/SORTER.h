@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <memory>
+#include "RANDOM_GENERATOR.h"
 
 class SORT_EXCEPT : std::runtime_error {
 public:
@@ -60,16 +61,33 @@ public:
     INSERTION_ITER& operator =(const INSERTION_ITER&) = delete;
     void sort(std::vector<uint32_t> &array) override;
 };
+class MERGE_ITER : public SORTER {
+public:
+    MERGE_ITER() = default;
+    MERGE_ITER(const MERGE_ITER&) = delete;
+    MERGE_ITER& operator =(const MERGE_ITER&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+};
 class MERGE : public SORTER {
 public:
     MERGE() = default;
     MERGE(const MERGE&) = delete;
     MERGE& operator =(const MERGE&) = delete;
     void sort(std::vector<uint32_t> &array) override;
+    static void merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end,
+                      size_t r_begin, size_t r_end);
 private:
     static void merge_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
-    static void merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end,
-                     size_t r_begin, size_t r_end);
+};
+
+class QUICK : public SORTER {
+public:
+    QUICK() = default;
+    QUICK(const QUICK&) = delete;
+    QUICK& operator =(const QUICK&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+private:
+    static void quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
 };
 class SORTER_SELECTOR {
 public:
@@ -79,6 +97,8 @@ public:
         m_map["insertion"] = std::make_unique<INSERTION>();
         m_map["insertion_iter"] = std::make_unique<INSERTION_ITER>();
         m_map["merge"] = std::make_unique<MERGE>();
+        m_map["merge_iter"] = std::make_unique<MERGE_ITER>();
+        m_map["quick"] = std::make_unique<QUICK>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);

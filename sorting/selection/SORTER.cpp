@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
+#include <cmath>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
@@ -166,4 +167,42 @@ void MERGE::merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end, si
     index = 0;
     while(left <= r_end)
         array[left++] = temp_buffer[index++];
+}
+
+void MERGE_ITER::sort(std::vector<uint32_t> &array) {
+    MERGE merge;
+    for (size_t i = 2; i < array.size(); i = i * 2) {
+        for (size_t j = 0; array.size(); j = j + i) {
+            size_t l_begin = j;
+            size_t l_end =  j + i ;
+            size_t r_begin = l_end + 1;
+            size_t r_end = r_begin + i -1;
+            merge.merge(array, l_begin, l_end, r_begin, r_end);
+        }
+    }
+
+}
+
+void QUICK::sort(std::vector<uint32_t> &array) {
+    quick_sort(array,0,array.size() - 1);
+}
+
+void QUICK::quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end) {
+    if(end <= begin)
+        return;
+    RANDOM_GENERATOR rand_number(begin, end);
+    size_t pivot_index = rand_number.getNumber();
+    swap(array,pivot_index, begin);
+    size_t low(begin + 1);
+    size_t high = low;
+    for(high = low; high <= end; high++){
+        if(array[high] < array[begin]){
+            swap(array,low, high);
+            low++;
+        }
+    }
+    swap(array,begin,low-1);
+
+    quick_sort(array,begin,low-1);
+    quick_sort(array,low, end);
 }
