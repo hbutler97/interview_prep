@@ -17,23 +17,21 @@ int main(int argc, char* argv[]) {
                                                 true,"","String",*cmd,nullptr);
         cmd->parse( argc, argv );
 
+        if(size.getValue() <= 1){
+            std::cout << "Size parameter has to be greater than 1" << std::endl;
+            return EXIT_FAILURE;
+        }
         std::vector<uint32_t> buffer(size.getValue());
         RANDOM_GENERATOR random_number(1,size.getValue());
 
         for(std::size_t i = 0; i<size.getValue(); i++)
             buffer[i] = random_number.getNumber();
-        /*//special case for heap sort.  Have to move every element up by 1 location
-        if(algorithm.getValue() == "heap") {
-            buffer.push_back(buffer[buffer.size() - 1]);
-            for (std::size_t i = 1; i < size.getValue(); i++)
-               // buffer[i-1]= buffer[i];
-                buffer[i] = 0;
-            buffer[0] = 0;
-        }*/
+
         SORTER_SELECTOR sorter;
         sorter.sort(algorithm.getValue(),buffer);
         std::string result = (sorter.checkSorted(buffer))?"PASS":"FAIL";
         std::cout << result << std::endl;
+
     }
     catch (TCLAP::ArgException &e)
     { std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl; return EXIT_FAILURE;}

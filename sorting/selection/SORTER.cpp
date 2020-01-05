@@ -209,7 +209,6 @@ void BINARY_HEAP::insertNode(std::vector<uint32_t> &array, uint32_t value) {
     array.push_back(value);
     size_t index = array.size() - 1;
     bubbleUpHeap(array,index);
-
 }
 void BINARY_HEAP::bubbleUpHeap(std::vector<uint32_t> &array, uint32_t index){
     if(index == 1)
@@ -225,6 +224,17 @@ void BINARY_HEAP::sort(std::vector<uint32_t> &array) {
     local_array.push_back(local_array.front());
     local_array[0] = 0;
     buildHeap(local_array);
+  //add test to insert nodes will add to the original array contents
+    RANDOM_GENERATOR rand(0, array.size());
+    uint32_t new_numb = rand.getNumber();
+    std::cout << "Inserting " << new_numb
+              << " new values in to the input array to test insertheap function" << std::endl;
+    for(size_t i = 0; i < new_numb; i++){
+        uint32_t num = rand.getNumber();
+        array.push_back(num);
+        insertNode(local_array, num);
+    }
+
     for(size_t i = array.size() ; i > 0; i--)
         array[i-1] = removeMax(local_array);
 }
