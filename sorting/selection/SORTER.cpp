@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <cmath>
+#include <deque>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
@@ -202,4 +203,83 @@ void QUICK::quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end) {
     swap(array,begin,low-1);
     quick_sort(array,begin,low-1);
     quick_sort(array,low, end);
+}
+
+void BINARY_HEAP::insertNode(std::vector<uint32_t> &array, uint32_t value) {
+    array.push_back(value);
+    size_t index = array.size() - 1;
+    bubbleUpHeap(array,index);
+
+}
+void BINARY_HEAP::bubbleUpHeap(std::vector<uint32_t> &array, uint32_t index){
+    if(index == 1)
+        return;
+    uint32_t parent_index = getParentIndex(index);
+    if(array[index] > array[parent_index]){
+        swap(array,index,getParentIndex(index));
+        bubbleUpHeap(array,getParentIndex(index));
+    }
+}
+void BINARY_HEAP::sort(std::vector<uint32_t> &array) {
+
+    std::vector<uint32_t> local_array(array);
+    local_array.push_back(local_array.front());
+    local_array[0];
+    buildHeap(local_array);
+    for(size_t i = array.size() -1 ; i >= 0; --i)
+        array[i] = removeMax(local_array);
+}
+
+void BINARY_HEAP::printHeap(std::vector<uint32_t> & array) {
+    std::deque<uint32_t> index_queue;
+    index_queue.push_back(1);
+    while (!index_queue.empty()){
+        std::cout << array[index_queue.front()] << ",";
+        if(getLeftChildIndex(index_queue.front()) < array.size()) {
+            index_queue.push_back(getLeftChildIndex(index_queue.front()));
+        }
+        if(getRightChildIndex(index_queue.front()) < array.size()) {
+            index_queue.push_back(getRightChildIndex(index_queue.front()));
+        }
+        index_queue.pop_front();
+    }
+    std::cout << std::endl;
+}
+
+uint32_t BINARY_HEAP::removeMax(std::vector<uint32_t> &array) {
+    swap(array,1, array.size() -1);
+    uint32_t max_value = array[array.size() -1];
+    array.erase(array.end()-1);
+    bubbleDownHeap(array, 1);
+    return max_value;
+}
+
+void BINARY_HEAP::bubbleDownHeap(std::vector<uint32_t> &array, uint32_t index) {
+    bool has_left_children = getLeftChildIndex(index) < array.size();
+    bool has_right_children = getRightChildIndex(index) < array.size();
+    bool has_no_children = !has_left_children & !has_right_children;
+    if(has_no_children)
+        return;
+    bool left_child_greater = (array[index] < array[getLeftChildIndex(index)]);
+    bool right_child_greater = (array[index] < array[getRightChildIndex(index)]);
+
+    if(left_child_greater & right_child_greater){
+        if(array[getLeftChildIndex(index)]> array[getRightChildIndex(index)]){
+            swap(array, index, getLeftChildIndex(index));
+            bubbleDownHeap(array, getLeftChildIndex(index));
+        } else {
+            swap(array, index, getRightChildIndex(index));
+            bubbleDownHeap(array, getRightChildIndex(index));
+        }
+    } else if (has_left_children & left_child_greater) {
+        swap(array, index, getLeftChildIndex(index));
+        bubbleDownHeap(array, getLeftChildIndex(index));
+    } else if(has_right_children & right_child_greater ){
+        swap(array, index, getRightChildIndex(index));
+        bubbleDownHeap(array, getRightChildIndex(index));
+    }
+}
+
+void BINARY_HEAP::buildHeap(std::vector<uint32_t> &array) {
+    bubbleUpHeap(array,(array.size() - 1) / 2);
 }

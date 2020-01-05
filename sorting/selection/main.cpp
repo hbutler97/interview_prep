@@ -22,7 +22,14 @@ int main(int argc, char* argv[]) {
 
         for(std::size_t i = 0; i<size.getValue(); i++)
             buffer[i] = random_number.getNumber();
-
+        /*//special case for heap sort.  Have to move every element up by 1 location
+        if(algorithm.getValue() == "heap") {
+            buffer.push_back(buffer[buffer.size() - 1]);
+            for (std::size_t i = 1; i < size.getValue(); i++)
+               // buffer[i-1]= buffer[i];
+                buffer[i] = 0;
+            buffer[0] = 0;
+        }*/
         SORTER_SELECTOR sorter;
         sorter.sort(algorithm.getValue(),buffer);
         std::string result = (sorter.checkSorted(buffer))?"PASS":"FAIL";

@@ -86,8 +86,26 @@ public:
     QUICK(const QUICK&) = delete;
     QUICK& operator =(const QUICK&) = delete;
     void sort(std::vector<uint32_t> &array) override;
+
 private:
     static void quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
+};
+class BINARY_HEAP : public SORTER {
+public:
+    BINARY_HEAP() = default;
+    BINARY_HEAP(const BINARY_HEAP&) = delete;
+    BINARY_HEAP& operator =(const BINARY_HEAP&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+private:
+    static uint32_t getLeftChildIndex(uint32_t node_index) {return node_index << 0x1UL;}; //watch roll over
+    static uint32_t getRightChildIndex(uint32_t node_index) {return (node_index << 0x1UL) + 1;}; //watch roll over
+    static uint32_t getParentIndex(uint32_t node_index) {return node_index >> 0x1UL;}; //watch roll over
+    static void insertNode(std::vector<uint32_t> &array, uint32_t value);
+    static void bubbleUpHeap(std::vector<uint32_t> &array, uint32_t index);
+    static void bubbleDownHeap(std::vector<uint32_t> &array, uint32_t index);
+    static void printHeap(std::vector<uint32_t> &array);
+    static void buildHeap(std::vector<uint32_t> &array);
+    static uint32_t removeMax(std::vector<uint32_t> &array);
 };
 class SORTER_SELECTOR {
 public:
@@ -99,6 +117,7 @@ public:
         m_map["merge"] = std::make_unique<MERGE>();
         m_map["merge_iter"] = std::make_unique<MERGE_ITER>();
         m_map["quick"] = std::make_unique<QUICK>();
+        m_map["heap"] = std::make_unique<BINARY_HEAP>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);
