@@ -221,13 +221,12 @@ void BINARY_HEAP::bubbleUpHeap(std::vector<uint32_t> &array, uint32_t index){
     }
 }
 void BINARY_HEAP::sort(std::vector<uint32_t> &array) {
-
     std::vector<uint32_t> local_array(array);
     local_array.push_back(local_array.front());
-    local_array[0];
+    local_array[0] = 0;
     buildHeap(local_array);
-    for(size_t i = array.size() -1 ; i >= 0; --i)
-        array[i] = removeMax(local_array);
+    for(size_t i = array.size() ; i > 0; i--)
+        array[i-1] = removeMax(local_array);
 }
 
 void BINARY_HEAP::printHeap(std::vector<uint32_t> & array) {
@@ -263,7 +262,7 @@ void BINARY_HEAP::bubbleDownHeap(std::vector<uint32_t> &array, uint32_t index) {
     bool left_child_greater = (array[index] < array[getLeftChildIndex(index)]);
     bool right_child_greater = (array[index] < array[getRightChildIndex(index)]);
 
-    if(left_child_greater & right_child_greater){
+    if(left_child_greater & right_child_greater & has_left_children & has_right_children){
         if(array[getLeftChildIndex(index)]> array[getRightChildIndex(index)]){
             swap(array, index, getLeftChildIndex(index));
             bubbleDownHeap(array, getLeftChildIndex(index));
@@ -281,5 +280,9 @@ void BINARY_HEAP::bubbleDownHeap(std::vector<uint32_t> &array, uint32_t index) {
 }
 
 void BINARY_HEAP::buildHeap(std::vector<uint32_t> &array) {
-    bubbleUpHeap(array,(array.size() - 1) / 2);
+    size_t first_node = (array.size() - 1)/2;
+    for(size_t i = first_node; i > 0; --i){
+        bubbleDownHeap(array,i);
+    }
+
 }
