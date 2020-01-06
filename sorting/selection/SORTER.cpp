@@ -299,9 +299,12 @@ void BINARY_HEAP::buildHeap(std::vector<uint32_t> &array) {
 
 void COUNT::sort(std::vector<uint32_t> &array) {
     m_buffer.resize(array.size() + 1);
-    for(unsigned int i : array){
+    for(unsigned int i : array)
         m_buffer[i].push_back(i);
-    }
+    unloadBuffer(array);
+
+}
+void COUNT::unloadBuffer(std::vector<uint32_t> &array) {
     size_t index = 0;
     for(std::deque<uint32_t> i: m_buffer) {
         while(!i.empty()) {
@@ -309,4 +312,21 @@ void COUNT::sort(std::vector<uint32_t> &array) {
             i.pop_front();
         }
     }
+    m_buffer.clear();
+}
+void COUNT::sort(std::vector<uint32_t> &array, uint8_t radix, uint8_t nibble){
+    auto permutations = static_cast<uint32_t>(pow(2,radix));
+    m_buffer.resize(permutations);
+    for(unsigned int i: array){
+        uint32_t index = ((i >> (nibble * radix)) & (permutations - 1));
+        m_buffer.at(index).push_back(i);
+    }
+    unloadBuffer(array);
+}
+
+void RADIX::sort(std::vector<uint32_t> &array) {
+    m_count_sort.sort(array,8, 0);
+    m_count_sort.sort(array,8, 1);
+    m_count_sort.sort(array,8, 2);
+    m_count_sort.sort(array,8, 3);
 }

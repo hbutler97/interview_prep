@@ -96,11 +96,21 @@ class COUNT : public SORTER {
 public:
     COUNT() = default;
     COUNT(const COUNT&) = delete;
-    QUICK& operator =(const QUICK&) = delete;
+    COUNT& operator =(const COUNT&) = delete;
     void sort(std::vector<uint32_t> &array) override;
-
+    void sort(std::vector<uint32_t> &array, uint8_t radix, uint8_t nibble);
 private:
+    void unloadBuffer(std::vector<uint32_t> &array);
     std::vector<std::deque<uint32_t>> m_buffer;
+};
+class RADIX : public SORTER {
+public:
+    RADIX() = default;
+    RADIX(const RADIX&) = delete;
+    RADIX& operator =(const QUICK&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+private:
+    COUNT m_count_sort;
 };
 class BINARY_HEAP : public SORTER {
 public:
@@ -131,6 +141,7 @@ public:
         m_map["quick"] = std::make_unique<QUICK>();
         m_map["heap"] = std::make_unique<BINARY_HEAP>();
         m_map["count"] = std::make_unique<COUNT>();
+        m_map["radix"] = std::make_unique<RADIX>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);
