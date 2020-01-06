@@ -296,3 +296,17 @@ void BINARY_HEAP::buildHeap(std::vector<uint32_t> &array) {
     }
 
 }
+
+void COUNT::sort(std::vector<uint32_t> &array) {
+    m_buffer.resize(array.size() + 1);
+    for(unsigned int i : array){
+        m_buffer[i].push_back(i);
+    }
+    size_t index = 0;
+    for(std::deque<uint32_t> i: m_buffer) {
+        while(!i.empty()) {
+            array[index++] = i.front();
+            i.pop_front();
+        }
+    }
+}

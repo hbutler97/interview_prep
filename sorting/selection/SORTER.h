@@ -8,6 +8,7 @@
 #include <string>
 #include <cstdint>
 #include <stdexcept>
+#include <deque>
 #include <unordered_map>
 #include <memory>
 #include "RANDOM_GENERATOR.h"
@@ -90,6 +91,17 @@ public:
 private:
     static void quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
 };
+
+class COUNT : public SORTER {
+public:
+    COUNT() = default;
+    COUNT(const COUNT&) = delete;
+    QUICK& operator =(const QUICK&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+
+private:
+    std::vector<std::deque<uint32_t>> m_buffer;
+};
 class BINARY_HEAP : public SORTER {
 public:
     BINARY_HEAP() = default;
@@ -118,6 +130,7 @@ public:
         m_map["merge_iter"] = std::make_unique<MERGE_ITER>();
         m_map["quick"] = std::make_unique<QUICK>();
         m_map["heap"] = std::make_unique<BINARY_HEAP>();
+        m_map["count"] = std::make_unique<COUNT>();
     };
     void sort(std::string &sort_algorithm, std::vector<uint32_t> &array);
     static bool checkSorted(std::vector<uint32_t> &array);

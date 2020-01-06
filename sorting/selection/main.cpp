@@ -31,7 +31,6 @@ int main(int argc, char* argv[]) {
         sorter.sort(algorithm.getValue(),buffer);
         std::string result = (sorter.checkSorted(buffer))?"PASS":"FAIL";
         std::cout << result << std::endl;
-
     }
     catch (TCLAP::ArgException &e)
     { std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl; return EXIT_FAILURE;}
