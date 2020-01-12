@@ -172,13 +172,28 @@ void MERGE::merge(std::vector<uint32_t> &array, size_t l_begin, size_t l_end, si
 
 void MERGE_ITER::sort(std::vector<uint32_t> &array) {
     MERGE merge;
-    for (size_t i = 2; i < array.size(); i = i * 2) {
-        for (size_t j = 0; array.size(); j = j + i) {
-            size_t l_begin = j;
-            size_t l_end =  j + i ;
-            size_t r_begin = l_end + 1;
-            size_t r_end = r_begin + i -1;
-            merge.merge(array, l_begin, l_end, r_begin, r_end);
+    size_t l_begin(0);
+    size_t l_end(0);
+    size_t r_begin(0);
+    size_t r_end(0);
+    size_t shift(1);
+    bool short_frame(false);
+    for (size_t size = 1; size < array.size(); size = size * 2) {
+        short_frame = false;
+        for(l_begin = 0; (l_begin < array.size()) & !short_frame; l_begin = l_begin + (0x1UL << shift)){
+            l_end = l_begin + size - 1;
+            r_begin = l_end + 1;
+            r_end = r_begin + size - 1;
+            short_frame = (l_end >= array.size() || r_begin >= array.size() || r_end >=array.size());
+            if(short_frame) break;
+            merge.merge(array,l_begin, l_end, r_begin, r_end);
+        }
+        shift++;
+        if(short_frame) {
+            l_end = (l_end >= array.size())?array.size():l_end;
+            r_begin = (r_begin >= array.size())?array.size():r_begin;
+            r_end = (r_end >= array.size())?array.size():r_end;
+            merge.merge(array,l_begin, l_end, r_begin, r_end);
         }
     }
 
