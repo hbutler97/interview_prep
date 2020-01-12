@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cmath>
 #include <deque>
+#include <stack>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
 
@@ -344,4 +345,48 @@ void RADIX::sort(std::vector<uint32_t> &array) {
     m_count_sort.sort(array,8, 1);
     m_count_sort.sort(array,8, 2);
     m_count_sort.sort(array,8, 3);
+}
+
+void QUICK_ITER::sort(std::vector<uint32_t> &array) {
+    size_t begin(0);
+    size_t end(array.size() - 1);
+    size_t pivot(0);
+    int value(0);
+    std::stack<size_t> stack;
+    stack.push(begin);
+    stack.push(end);
+    while(!stack.empty()){
+        end = stack.top();
+        stack.pop();
+        begin = stack.top();
+        stack.pop();
+        pivot = quick_sort(array,begin,end);
+        value = (pivot - 1) - begin;
+        if(value > 0){
+            stack.push(begin);
+            stack.push(pivot - 1);
+        }
+        value = end - (pivot + 1);
+        if(value > 0 ){
+            stack.push(pivot + 1);
+            stack.push(end);
+        }
+    }
+}
+
+size_t QUICK_ITER::quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end) {
+    //add error checking
+    if(end <= begin)
+        return end;
+    RANDOM_GENERATOR rand_number(begin, end);
+    swap(array,rand_number.getNumber(), begin);
+
+    size_t low(begin + 1);
+
+    for(size_t high = low; high <= end; high++){
+        if(array[high] < array[begin])
+            swap(array,low++, high);
+    }
+    swap(array,begin,low-1);
+    return low - 1;
 }

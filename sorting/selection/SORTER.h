@@ -92,6 +92,17 @@ private:
     static void quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
 };
 
+class QUICK_ITER : public SORTER {
+public:
+    QUICK_ITER() = default;
+    QUICK_ITER(const QUICK_ITER&) = delete;
+    QUICK_ITER& operator =(const QUICK_ITER&) = delete;
+    void sort(std::vector<uint32_t> &array) override;
+
+private:
+    static size_t quick_sort(std::vector<uint32_t> &array, size_t begin, size_t end);
+};
+
 class COUNT : public SORTER {
 public:
     COUNT() = default;
@@ -139,6 +150,7 @@ public:
         m_map["merge"] = std::make_unique<MERGE>();
         m_map["merge_iter"] = std::make_unique<MERGE_ITER>();
         m_map["quick"] = std::make_unique<QUICK>();
+        m_map["quick_iter"] = std::make_unique<QUICK_ITER>();
         m_map["heap"] = std::make_unique<BINARY_HEAP>();
         m_map["count"] = std::make_unique<COUNT>();
         m_map["radix"] = std::make_unique<RADIX>();
