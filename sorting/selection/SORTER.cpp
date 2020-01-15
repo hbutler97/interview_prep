@@ -94,22 +94,17 @@ void INSERTION::sort(std::vector<uint32_t> &array) {
      */
     sortHelper(array, array.size());
 }
-
 void INSERTION::sortHelper(std::vector<uint32_t> &array, size_t numb_elements) {
 
     if(numb_elements <= 1)
         return;
     sortHelper(array, numb_elements-1);
-    size_t index = numb_elements - 1;
-    uint32_t value = array[index];
-    bool found_slot = false;
-    for(size_t i = index; (i > 0) & (!found_slot); --i) {
-        if(array[i-1] > value) {
-            array[i] = array[i - 1];
-            array[i-1] = value;
-        }
+    bool slot_found(false);
+    for(size_t i = numb_elements-1; (i >= 1) & (!slot_found); --i) {
+        if(array[i] < array[i-1])
+            swap(array, i, i-1);
         else
-            found_slot = true;
+            slot_found = true;
     }
 }
 
@@ -361,12 +356,12 @@ void QUICK_ITER::sort(std::vector<uint32_t> &array) {
         begin = stack.top();
         stack.pop();
         pivot = quick_sort(array,begin,end);
-        value = (pivot - 1) - begin;
+        value = static_cast<int32_t>((pivot - 1) - begin);
         if(value > 0){
             stack.push(begin);
             stack.push(pivot - 1);
         }
-        value = end - (pivot + 1);
+        value = static_cast<int32_t >(end - (pivot + 1));
         if(value > 0 ){
             stack.push(pivot + 1);
             stack.push(end);
