@@ -10,6 +10,15 @@
 #include <stack>
 #include "SORTER.h"
 #include "MEASUREMENT.h"
+#include <queue>
+
+void test()
+{
+    std::vector<int> test_vec;
+    std::priority_queue<int> pq(std::less<int>(), test_vec);
+
+    //std::priority_queue<int> my(std::greater<int>(),test_vec);
+}
 
 void SELECTION::sort(std::vector<uint32_t> &array) {
     /*
@@ -95,7 +104,6 @@ void INSERTION::sort(std::vector<uint32_t> &array) {
     sortHelper(array, array.size());
 }
 void INSERTION::sortHelper(std::vector<uint32_t> &array, size_t numb_elements) {
-
     if(numb_elements <= 1)
         return;
     sortHelper(array, numb_elements-1);
@@ -109,6 +117,17 @@ void INSERTION::sortHelper(std::vector<uint32_t> &array, size_t numb_elements) {
 }
 
 void INSERTION_ITER::sort(std::vector<uint32_t> &array) {
+    for(size_t j = 1; j < array.size(); j++) {
+        bool found_slot = false;
+        for(size_t i = j; (i > 0) & (!found_slot); --i) {
+            if(array[i] < array[i-1])
+                swap(array, i, i - 1);
+            else
+                found_slot = true;
+        }
+    }
+}
+/*void INSERTION_ITER::sort(std::vector<uint32_t> &array) {
     for(size_t j = 1; j < array.size(); j++){
         size_t index = j;
         uint32_t value = array[index];
@@ -122,7 +141,7 @@ void INSERTION_ITER::sort(std::vector<uint32_t> &array) {
                 found_slot = true;
         }
     }
-}
+}*/
 
 void MERGE::sort(std::vector<uint32_t> &array) {
     //Need to check input
