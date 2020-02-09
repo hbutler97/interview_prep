@@ -347,6 +347,17 @@ bool check_if_sum_possible(vector <long long int> arr, long long int k) {
     return ret && (bag2.size() > 0);
 
 }
+bool checklastpal(std::string s){
+    bool ispal(true);
+    std::string my_s = s.substr(s.rfind("|") + 1);
+    int begin(0);
+    int end(my_s.size() -1);
+
+    while((begin <= end) && ispal)
+        ispal = (my_s[begin++] == my_s[end--]);
+
+    return ispal;
+}
 std::string convertstring(std::string s, std::vector<bool> pipes){
     //assert pipes has size is one less than size of s
     std::string ret;
@@ -359,9 +370,21 @@ std::string convertstring(std::string s, std::vector<bool> pipes){
     }
     return ret;
 }
+std::string convertintstring(std::string s, std::vector<bool> pipes){
+    //assert pipes has size is one less than size of s
+    std::string ret;
+    std::string my_s = s.substr(0, pipes.size() + 1);
+    std::size_t i = 0;
+    for(i=0; i < pipes.size() ; ++i){
+        ret = ret + (1,my_s[i]) + ((pipes[i])?"|":"");
+    }
+
+    ret = "|" + ret + my_s[i] + "|";
+    return ret;
+}
 bool ispal(std::string s){
     std::string my_s = "|" + s;
-
+    if(s.rfind("|") == std::string::npos) return true;
     size_t second_pipe = (my_s.rfind("|") == std::string::npos) ? my_s.size() - 1 : my_s.rfind("|");
     size_t first_pipe = (my_s.rfind("|", second_pipe - 1) == std::string::npos) ? 0 : my_s.rfind("|", second_pipe - 1);
     std::string sample = my_s.substr(first_pipe+1, second_pipe - first_pipe - 1);
@@ -371,34 +394,26 @@ bool ispal(std::string s){
     int end(sample.size() -1);
 
     while((begin <= end) && ispal)
-        ispal = (s[begin++] == s[end--]);
+        ispal = (sample[begin++] == sample[end--]);
 
     return ispal;
 }
-bool checklastpal(std::string s){
-
-    std::string my_s = s.substr(s.rfind("|") + 1);
-
-    return ispal(my_s);
-
-}
-std::vector<vector<bool>> boolbag;
+std::vector<string> stringbag;
 void genboolhelper(std::string s, int numb_slots, std::vector<bool> slate){
     if(slate.size() == numb_slots){
-
-      if(ispal(convertstring(s, slate))){
-            boolbag.push_back(slate);
-        }
+        std::string temp = convertstring(s, slate);
+        if(checklastpal(temp))
+            stringbag.push_back(temp);
         return;
     }
     slate.push_back(false);
     std::string temp = convertstring(s, slate);
-   // if(ispal(temp))
+    if(ispal(temp))
         genboolhelper(s,numb_slots,slate);
     slate.pop_back();
     slate.push_back(true);
     std::string temp2 = convertstring(s, slate);
-    //if(ispal(temp2))
+    if(ispal(temp2))
         genboolhelper(s,numb_slots, slate);
     slate.pop_back();
 }
@@ -411,12 +426,12 @@ void genboobag(std::string s){
 
 
 int main() {
-    std::string s("racada");
+    std::string s("abracadabra");
     genboobag(s);
 
 
-    for(size_t i = 0; i < boolbag.size(); ++i){
-        std::cout << convertstring(s, boolbag[i]) << std::endl;
+    for(size_t i = 0; i < stringbag.size(); ++i){
+        std::cout << stringbag[i] << std::endl;
     }
 
 
