@@ -1,188 +1,307 @@
 #include <bits/stdc++.h>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <set>
-#include <algorithm>
-#include <cctype>
-#include <queue>
-#include <stack>
-/*'#' = Water.
-'.' = Land.
-'a' = Key of type 'a'. Any lowercase character represents a key.
-'A' = Door that can be opened with key 'a'. Any uppercase character represents a door.
-'@' = Starting cell.
-'+' = The goal cell.*/
 
-class square{
-public:
-    square(char c, int row, int col, int max_col):
-            m_visited(false),
-            m_is_water(false),
-            m_is_land(false),
-            m_is_key(false),
-            m_is_door(false),
-            m_is_start(false),
-            m_is_goal(false),
-            m_row(row),
-            m_col(col),
-            m_vertix(row * max_col + col),
-            m_max_col(max_col)
-    {
-        switch (c){
-            case '#': m_is_water = true; break;
-            case '.': m_is_land = true; break;
-            case '@': m_is_start = true; break;
-            case '+': m_is_goal = true; break;
-            default : break; //TODO should throw exception
-        }
-        if(isalpha(c) && isupper(c)){
-            m_is_door = true;
-            m_door_value = (1, tolower(c));
-        }
-        if(isalpha(c) && islower(c)){
-            m_is_key = true;
-            m_key_value = (1, c);
-            m_keys.insert(m_key_value);
-        }
-    };
-    bool is_water(){return m_is_water;};
-    bool is_land(){return m_is_land;};
-    bool is_door(){return m_is_door;};
-    bool is_start(){return m_is_start;};
-    bool is_goal(){return m_is_goal;};
-    bool is_key(){return m_is_key;};
-    std::string get_key(){return m_key_value;};
-    std::string get_door(){return m_door_value;};
-    void set_visited(bool value){m_visited = value;};
-    bool visited(){return m_visited;};
-    int get_vertix(){return m_vertix;};
-    bool have_key(std::string key){std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c){ return std::tolower(c);}); return (m_keys.find(key) != m_keys.end());};
-    bool have_same_keys(std::set<std::string> keys){ return (keys == m_keys);};
-    void add_key(std::string key){m_keys.insert(key);};
-    void set_parent(square* parent){if(std::find(m_parent.begin(), m_parent.end(), parent) == m_parent.end()) m_parent.push_back(parent);};
-    ~square() = default;
+using namespace std;
+#include<unordered_map>
+#include<map>
+#include<vector>
+#include<queue>
+#include<algorithm>
 
-private:
-    bool m_visited;
-    bool m_is_water;
-    bool m_is_land;
-    bool m_is_key;
-    std::string m_key_value;
-    bool m_is_door;
-    std::string m_door_value;
-    bool m_is_start;
-    bool m_is_goal;
-    int m_row;
-    int m_col;
-    int m_vertix;
-    int m_max_col;
-    std::deque<square *>m_parent;
-    std::set<std::string> m_keys;
-};
-std::vector<std::vector<square*>> graph;
-square *start(nullptr);
-square *goal(nullptr);
-std::deque<square*> path_q;
-/*
-3
-...B
-.b#.
-@#+.
-*/
-int getvertix(int row, int col, int max_col){
-    return row * max_col + col;
+std::map<std::string, std::vector<string>> graph;
+std::unordered_map<std::string, int> visited;
+std::vector<std::vector<std::string>> slate;
+std::vector<std::string> bag;
+bool isvalid_neighbor(std::string vertix, std::string neighbor) {
+    std::sort(vertix.begin(), vertix.end());
+    std::sort(neighbor.begin(), neighbor.end());
+    std::string temp;
+    temp.resize(vertix.size() + neighbor.size());
+    std::string::iterator it = std::set_intersection(vertix.begin(), vertix.end(), neighbor.begin(), neighbor.end(), temp.begin());
+    temp.resize(it - temp.begin());
+
+    return ((vertix.size() - temp.size()) == 1);
 }
-void bsf(std::vector<std::vector<square*>> the_graph, square* start_sq, square* goal_sq){
-    std::deque<square*> q;
-    std::set<std::string> keyring;
-    q.push_back(start_sq);
-    start_sq->set_visited(true);
-    if(start_sq->is_key())
-        keyring.insert(start_sq->get_key());
 
-    while(!q.empty()){
-        square* node = q.front();
-        std::cout << node->get_vertix() << std::endl;
-        if(node->get_vertix() == goal_sq->get_vertix()){
-            std::cout << "match" <<std::endl;
+bool isvalid_neighbor2(std::string vertix, std::string neighbor) {
+    int diff(0);
+    for(size_t i =0; i < vertix.size(); i++){
+        if(vertix[i] != neighbor[i])
+            diff++;
+    }
+    return (diff == 1);
+}
+
+
+void trimslate(std::vector<std::vector<std::string>> slate){
+    for(size_t i = 1; i<slate.size(); ++i){
+        std::vector<std::string> temp;
+        for(size_t j = 0; j < slate[i-1].size(); j++){
+
+            for(size_t k = 0; k < slate[i].size(); k++){
+                if(isvalid_neighbor2(slate[i-1][j], slate[i][k]))
+                    if(!std::count(temp.begin(), temp.end(), slate[i][k]))
+                        temp.push_back(slate[i][k]);
+            }
+
+        }
+        slate[i] = temp;
+
+    }
+    for(size_t i = slate.size()-1; i> 0; --i){
+        std::vector<std::string> temp;
+        for(size_t j = 0; j < slate[i].size(); j++){
+
+            for(size_t k = 0; k < slate[i-1].size(); k++){
+                if(isvalid_neighbor2(slate[i-1][k], slate[i][j]))
+                    if(!std::count(temp.begin(), temp.end(), slate[i-1][k]))
+                        temp.push_back(slate[i-1][k]);
+            }
+
+        }
+        slate[i-1] = temp;
+
+
+    }
+    for(size_t i = 0; i < slate.size(); i++)
+        bag.push_back(slate[i][0]);
+}
+
+std::vector<std::string> check_level(std::vector<std::string> stable_level, std::vector<std::string> test_level){
+
+    std::vector<std::string> ret;
+    for(auto x: stable_level) {
+        for(auto y: test_level){
+            if(x != y && isvalid_neighbor2(x,y) && !std::count(ret.begin(), ret.end(),y)){
+                ret.push_back(y);
+            }
+        }
+    }
+  return ret;
+}
+
+void buildgraphentry(std::vector<std::string> words, std::string node, std::vector<std::string> &neighbors){
+    for(auto word: words){
+        if(word != node && isvalid_neighbor2(word, node) && !std::count(neighbors.begin(), neighbors.end(), word)){
+            neighbors.push_back(word);
+        }
+    }
+}
+void buildgraph(std::vector<string> words, std::string start, std::string stop){
+    words.push_back(start);
+    words.push_back(stop);
+    visited[start] = 0;
+    visited[stop] = 0;
+    for(auto x: words){
+        if(graph.find(x) == graph.end() && x != stop && x != start){
+            visited[x] = 0;
+            std::vector<std::string> neighbors;
+            buildgraphentry(words, x, neighbors);
+            graph[x] = neighbors;
+        }
+    }
+}
+void bfs(std::map<std::string, std::vector<string>> g, std::vector<string> words, std::string start, std::string stop){
+    std::vector<std::string> level1;
+    std::vector<std::string> level2;
+    std::deque<std::string> q;
+    q.push_back(start);
+    visited[start] += 1;
+    level1.push_back(start);
+    slate.push_back(level1);
+    std::vector<std::string> neighboards;
+    buildgraphentry(words,start,neighboards);
+    graph[start] = neighboards;
+    bool stop_found(false);
+    bool start_eq_stop = (start == stop);
+
+    //neighboards.clear();
+    //buildgraphentry(words,stop,neighboards);
+    //graph[stop] = neighboards;
+
+    while(!q.empty() && !stop_found){
+        int level_size = q.size();
+        for(size_t i = 0; i< level_size && !stop_found; ++i ){
+            std::string key = q.front();
+            for(size_t j = 0; j < graph[key].size() && !stop_found; ++j){
+                std::string neighbor = graph[key][j];
+                int allowed_visits = (start_eq_stop && neighbor == start)?2:1;
+                if(visited[neighbor] < allowed_visits) {
+                    visited[neighbor] += true;
+                    if(neighbor == stop){
+                        level2.clear();
+                        level2.push_back(neighbor);
+                        stop_found = true;
+                        break;
+                    }
+                    else {
+                        level2.push_back(neighbor);
+                        q.push_back(neighbor);
+                    }
+                }
+            }
+            q.pop_front();
+        }
+
+        level2 = check_level(level1, level2);
+        if(level2.empty()){
+            std::vector<std::string> temp;
+            temp.push_back("-1");
+            slate.clear();
+            slate.push_back(temp);
             return;
         }
+        slate.push_back(level2);
+        level1.clear();
+        level1 = level2;
+        level2.clear();
+    }
+    if(!stop_found) {
+        neighboards.clear();
+        neighboards.push_back(stop);
+        slate.push_back(neighboards);
+    }
+    for(size_t z = slate.size() - 1; z >= 1; --z) {
+        std::vector<std::string> temp = check_level(slate[z], slate[z - 1]);
+        if(!temp.empty()) {
+            slate[z - 1] = check_level(slate[z], slate[z - 1]);
+        } else {
+            temp.clear();
+            temp.push_back("-1");
+            slate.clear();
+            slate.push_back(temp);
+            return;
+        }
+    }
 
-        for(size_t j = 0; j < graph[node->get_vertix()].size(); j++){
-            square* this_square = graph[node->get_vertix()][j];
-            //case 1 come to a door and we don't have the key we skip adding it to the queue
-            if(this_square->is_door() &&
-               keyring.find(this_square->get_door()) == keyring.end()){
-                continue;
-            }
-            //case 2 this is a key.  We insert it into our key ring
-            if(this_square->is_key()){
-                keyring.insert(this_square->get_key());
-            }
-            //case 3 we already visited this square and the key ring is the same
-            // we don't add the queue
-            if(this_square->visited() && this_square->have_same_keys(keyring) && keyring.size() > 0) {
-                continue;
-            }
-            //case 4 come to a cell with an different keyring.  this we visit it again
-            if(this_square->visited() && !this_square->have_same_keys(keyring) && keyring.size() > 0) {
-                this_square->set_visited(false);
-            }
-            if(!(this_square->visited())){
-                this_square->set_visited(true);
-                this_square->set_parent(node);
-                for(auto x: keyring){
-                    this_square->add_key(x);
-                }
-                path_q.push_back(this_square);
-                q.push_back(this_square);
-            }
-        }
-        q.pop_front();
-    }
 }
-void build_graph(std::vector<std::string> maze){
-    int col_max = maze[0].length();
-    int row_max = maze.size();
-    std::vector<std::pair<int, int>> neighbors = {{0,-1}, {0,1},{-1,0},{1,0}};
-    graph.resize(row_max * col_max);
-    std::vector<square*> buffer(row_max*col_max);
-    for(size_t col = 0; col < col_max; col++){
-        for(size_t row = 0; row < row_max; row++) {
-            int value = getvertix(row,col,col_max);
-            buffer[value] = new square(maze[row][col], row, col, col_max);
-        }
-    }
-    for(size_t col = 0; col < col_max; col++){
-        for(size_t row = 0; row < row_max; row++){
-            for(auto x:neighbors){
-                if(row + x.first >= 0 &&
-                   row + x.first < row_max &&
-                   col + x.second >= 0 &&
-                   col + x.second < col_max &&
-                   maze[row + x.first][col + x.second] != '#'){
-                    int value = getvertix(row,col,col_max);
-                    square *new_neighbor = buffer[getvertix(row + x.first, col + x.second, col_max)];
-                    if(new_neighbor->is_start())
-                        start = new_neighbor;
-                    if(new_neighbor->is_goal())
-                        goal = new_neighbor;
-                    graph[value].push_back(new_neighbor);
+/*void bfs(std::map<std::string, std::vector<string>> g, std::string start, std::string stop){
+    std::deque<std::string> q;
+    q.push_back(start);
+    visited[start] += 1;
+    bool start_eq_stop = (start == stop);
+    int start_stop_visit = (start_eq_stop)?2:1;
+    std::vector<std::string> temp;
+    temp.push_back(start);
+    slate.push_back(temp);
+    while(!q.empty()) {
+        int level_size = q.size();
+        for (size_t i = 0; i < level_size; ++i) {
+            std::string key = q.front();
+            for(size_t j = 0; j < g[key].size(); j++){
+                if(key == start && visited[g[key][j]] < start_stop_visit) {
+                    visited[g[key][j]] += 1;
+                    q.push_back(g[key][j]);
+                }
+                else if(visited[g[key][j]] < 1){
+                        visited[g[key][j]] += 1;
+                        q.push_back(g[key][j]);
                 }
             }
+            q.pop_front();
         }
+        std::vector<std::string> temp2;
+        bool stop_is_here(false);
+        for(size_t k = 0; k < q.size(); ++k){
+            temp2.push_back(q[k]);
+            stop_is_here = (q[k] == stop);
+        }
+        if(stop_is_here && temp2.size() > 1){
+            int prev_level_size = slate[slate.size() - 1].size();
+            bool works_with_level_above(false);
+            for(size_t i = 0; i < prev_level_size && !works_with_level_above; ++i){
+                if(isvalid_neighbor2(stop, slate[slate.size() -1][i])){
+                    works_with_level_above = true;
+                }
+            }
+            if(works_with_level_above){
+                std::vector<std::string> z;
+                z.push_back(stop);
+                slate.push_back(z);
+                return;
+            }else {
+
+                std::vector<std::string>::iterator it = std::find(temp2.begin(), temp2.end(), stop);
+                temp2.erase(it);
+                slate.push_back(temp2);
+                std::vector<std::string> z;
+                z.push_back(stop);
+                slate.push_back(z);
+                return;
+            }
+        }
+
+        else if(!temp2.empty()) {
+            slate.push_back(temp2);
+        }
+
+
     }
 }
-int main(){
-    std::vector<std::string> test;
-    test.push_back("+B...");
-    test.push_back("####.");
-    test.push_back("##b#.");
-    test.push_back("a...A");
-    test.push_back("##@##");
+*/
+vector<string> string_transformation(vector<string> words, string start, string stop) {
+    if(words.size() == 0 && start == stop){
+        std::vector<string> temp;
+        temp.push_back("-1");
+        return temp;
+    }
+    if(stop.empty() || start.empty()) {
+        std::vector<string> temp;
+        temp.push_back("-1");
+        return temp;
+    }
+    if(isvalid_neighbor2(start, stop)) {
+        std::vector<std::string> temp;
+        temp.push_back(start);
+        temp.push_back(stop);
+        return temp;
+    }
+    buildgraph(words,start,stop);
+    bfs(graph, words, start, stop);
+    for(size_t i = 0; i < slate.size(); ++i){
+        if(slate[i][0].empty()){
+            std::vector<std::string> bag2;
+            bag2.push_back("-1");
+            return bag;
+        }
+        bag.push_back(slate[i][0]);
+    }
+    return bag;
+}
 
-    build_graph(test);
-    bsf(graph,start, goal);
+int main()
+{
+    ostream &fout = cout;
+
+    int words_size;
+    cin >> words_size;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    vector<string> words(words_size);
+    for (int words_i = 0; words_i < words_size; words_i++) {
+        string words_item;
+        getline(cin, words_item);
+
+        words[words_i] = words_item;
+    }
+
+    string start;
+    getline(cin, start);
+
+    string stop;
+    getline(cin, stop);
+
+    vector<string> res = string_transformation(words, start, stop);
+
+    for (int res_itr = 0; res_itr < res.size(); res_itr++) {
+        fout << res[res_itr];
+
+        if (res_itr != res.size() - 1) {
+            fout << "\n";
+        }
+    }
+
+    fout << "\n";
+
+
+    return 0;
 }
