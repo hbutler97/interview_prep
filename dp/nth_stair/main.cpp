@@ -17,9 +17,30 @@ long long int permute(vector<int> steps, int n){
     sort(steps.begin(), steps.end());
     return helper(steps, n);
 }
-long long int countWaysToClimb(vector<int> steps, int n) {
+/*long long int countWaysToClimb(vector<int> steps, int n) {
     return permute(steps, n);
+}*/
+
+long long int countWaysToClimb(vector<int> steps, int n) {
+    vector<long long int> dp(n+1, 0);
+    sort(steps.begin(), steps.end());
+    dp[0] = 1; //step 0
+
+    //need a check for step greater than n
+
+    for(size_t i= steps[0]; i <= n; ++i){
+        long long int ways(0);
+        for(auto x: steps){
+            if(i >= x)
+                ways += dp[i-x];
+        }
+        dp[i] = ways;
+    }
+
+    return dp[n];
 }
+
+
 
 
 int main() {
