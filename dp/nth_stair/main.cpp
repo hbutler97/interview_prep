@@ -44,7 +44,7 @@ long long int countWaysToClimb(vector<int> steps, int n) {
 
 
 int main() {
-    vector<int> steps={2,3,5};
+    vector<int> steps={2,3,5}; 
     countWaysToClimb(steps,10);
 
     return 0;
